@@ -19,6 +19,8 @@ public class StageStates : MonoBehaviour
     [SerializeField] GameObject bFloat;
     [SerializeField] GameObject wGoal;
     [SerializeField] GameObject bGoal;
+    [SerializeField] GameObject wLift;
+    [SerializeField] GameObject bLift;
 
 
     private StageState Stage;   
@@ -66,10 +68,12 @@ public class StageStates : MonoBehaviour
         wLadder.SetActive(true);
         wFloat.SetActive(true);
         wGoal.SetActive(true);
+        wLift.SetActive(true);
         bGround.SetActive(false);
         bLadder.SetActive(false);
         bFloat.SetActive(false);
         bGoal.SetActive(false);
+        bLift.SetActive(false);
     }
 
     private void Bgenerate()
@@ -78,9 +82,11 @@ public class StageStates : MonoBehaviour
         bLadder.SetActive(true);
         bFloat.SetActive(true);
         bGoal.SetActive(true);
+        bLift.SetActive(true);
         wGround.SetActive(false);
         wLadder.SetActive(false);
         wFloat.SetActive(false);
         wGoal.SetActive (false);
+        wLift.SetActive (false);
     }
 }
