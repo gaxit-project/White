@@ -1,6 +1,6 @@
-using UnityEngine.InputSystem;
 using UnityEngine;
-using Unity.VisualScripting;
+using UnityEngine.InputSystem;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMove : MonoBehaviour
@@ -21,6 +21,10 @@ public class PlayerMove : MonoBehaviour
     private bool isTouchingLadder = false;
     private bool isTouchingFloat = false;
     private Collider2D playerCollider;
+
+    // --- Lift 関係 ---
+    private LiftBase currentLift = null;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -32,16 +36,19 @@ public class PlayerMove : MonoBehaviour
     {
         Vector2 input = context.ReadValue<Vector2>();
 
-        // スティックの傾き具合を無視して -1, 0, 1 に変換
-        float deadZone = 0.3f; // 小さな傾きを無視するしきい値
+        float deadZone = 0.3f;
         float LadderZone = 0.8f;
+
         moveInput.x = Mathf.Abs(input.x) < deadZone ? 0 : Mathf.Sign(input.x);
         moveInput.y = Mathf.Abs(input.y) < deadZone ? 0 : Mathf.Sign(input.y);
 
-        if(isTouchingLadder && Mathf.Abs(moveInput.y) > 0)
+        // はしごに触れていて縦入力 → はしご状態へ
+        if (isTouchingLadder && Mathf.Abs(moveInput.y) > 0)
         {
             SetState(PlayerState.Ladder);
         }
+
+        // 強く横に倒したら Walk に戻す
         if (!isTouchingFloat && pstate == PlayerState.Ladder && Mathf.Abs(input.x) > LadderZone)
         {
             SetState(PlayerState.Walk);
@@ -54,17 +61,21 @@ public class PlayerMove : MonoBehaviour
 
         if (pstate == PlayerState.Walk)
         {
-            // 左右移動のみ（速度固定）
             velocity.x = moveInput.x * speed;
         }
         else if (pstate == PlayerState.Ladder)
         {
-            // はしご中は上下移動も固定速度に
             velocity.x = 0;
             velocity.y = moveInput.y * climbSpeed;
         }
 
         rb.velocity = velocity;
+
+        // --- Lift追従処理 ---
+        if (currentLift != null)
+        {
+            transform.position += currentLift.DeltaPosition;
+        }
     }
 
     public void OnLT(InputAction.CallbackContext context)
@@ -75,22 +86,16 @@ public class PlayerMove : MonoBehaviour
 
             var currentStage = StageStates.Instance.CurrentStage;
             var spriteRenderer = GetComponent<SpriteRenderer>();
-            if (currentStage == StageStates.StageState.White)
-            {
-                spriteRenderer.color = Color.black;
-            }
-            else
-            {
-                spriteRenderer.color = Color.white;
-            }
+            spriteRenderer.color = currentStage == StageStates.StageState.White ? Color.black : Color.white;
         }
     }
+
     private void SetState(PlayerState newState)
     {
         if (pstate == newState) return;
         pstate = newState;
 
-        if(pstate == PlayerState.Ladder)
+        if (pstate == PlayerState.Ladder)
         {
             IgnoreFloatCollisions(true);
             rb.gravityScale = 0f;
@@ -104,12 +109,36 @@ public class PlayerMove : MonoBehaviour
 
     private void IgnoreFloatCollisions(bool ignore)
     {
-        foreach(var floatObj in GameObject.FindGameObjectsWithTag("Float"))
+        foreach (var floatObj in GameObject.FindGameObjectsWithTag("Float"))
         {
             var col = floatObj.GetComponent<Collider2D>();
-            if(col != null)
+            if (col != null)
             {
-                Physics2D.IgnoreCollision(playerCollider, col,ignore);
+                Physics2D.IgnoreCollision(playerCollider, col, ignore);
+            }
+        }
+    }
+
+    // --- Lift検出 ---
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Lift"))
+        {
+            var lift = collision.gameObject.GetComponent<LiftBase>();
+            if (lift != null)
+            {
+                currentLift = lift;
+            }
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Lift"))
+        {
+            if (currentLift != null && collision.transform == currentLift.transform)
+            {
+                currentLift = null;
             }
         }
     }
@@ -127,7 +156,7 @@ public class PlayerMove : MonoBehaviour
 
         if (collision.CompareTag("Goal"))
         {
-            Debug.Log("Goal");
+            Debug.Log("Goal!");
         }
     }
 
@@ -137,7 +166,6 @@ public class PlayerMove : MonoBehaviour
         {
             isTouchingLadder = false;
 
-            // はしごから離れたら自動で歩行状態に戻す
             if (pstate == PlayerState.Ladder)
                 SetState(PlayerState.Walk);
         }
