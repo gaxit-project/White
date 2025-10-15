@@ -18,7 +18,7 @@ public class LiftMoveW : LiftBase
         previousPos = startPos;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
 
