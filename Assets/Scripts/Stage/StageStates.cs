@@ -25,6 +25,7 @@ public class StageStates : MonoBehaviour
     [SerializeField] GameObject bNeedle;
     [SerializeField] GameObject wSwitch;
     [SerializeField] GameObject bSwitch;
+    [SerializeField] GameObject Lightbg;
     [SerializeField] GameObject LightObj;
 
 
@@ -135,10 +136,12 @@ public class StageStates : MonoBehaviour
     private void SwitchOn()
     {
         LightObj.SetActive(true);
+        Lightbg.SetActive(true);
     }
 
     private void SwitchOff()
     {
         LightObj.SetActive(false);
+        Lightbg.SetActive(false);
     }
 }
