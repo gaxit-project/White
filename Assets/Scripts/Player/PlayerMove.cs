@@ -11,11 +11,14 @@ public class PlayerMove : MonoBehaviour
         Ladder
     };
 
+    // SwitchState Enum はStageStatesに処理を移管するため、使用する意味が薄くなったため、コメントアウト
+    /*
     public enum SwitchState
     {
         On,
         Off
     };
+    */
 
     [SerializeField] private float speed = 5f;
     [SerializeField] private float climbSpeed = 3f;
@@ -23,11 +26,13 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private PlayerState pstate;
-    private SwitchState sstate;
+    // private SwitchState sstate; // SwitchStateの削除に伴いコメントアウト
 
     private bool isTouchingLadder = false;
     private bool isTouchingFloat = false;
     private bool isTouchingSwitch = false;
+
+    // public static bool OnSwitch = false; // StageStatesで状態管理するため削除
     private Collider2D playerCollider;
 
     // --- Lift 関係 ---
@@ -38,7 +43,7 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         playerCollider = rb.GetComponent<Collider2D>();
         pstate = PlayerState.Walk;
-        sstate = SwitchState.Off;
+        // sstate = SwitchState.Off; // SwitchStateの削除に伴いコメントアウト
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -101,18 +106,24 @@ public class PlayerMove : MonoBehaviour
 
     public void OnAction(InputAction.CallbackContext context)
     {
-        if(context.performed)
+        if (context.performed)
         {
-            if(isTouchingSwitch == true)
+            if (isTouchingSwitch == true)
             {
-                if(sstate == SwitchState.Off)
+                // StageStatesのToggleSwitchを呼び出し、状態の反転処理をStageStatesに委譲
+                StageStates.Instance.ToggleSwitch();
+
+                // 旧コードのトグル処理は削除
+                /*
+                if(OnSwitch == false)
                 {
-                    sstate = SwitchState.On;
+                    OnSwitch = true;
                 }
-                else if(sstate == SwitchState.On)
+                else
                 {
-                    sstate = SwitchState.Off;
+                    OnSwitch = false;
                 }
+                */
             }
         }
     }

@@ -29,7 +29,7 @@ public class StageStates : MonoBehaviour
 
 
     private StageState Stage;
-    private PlayerMove.SwitchState switchState;
+    // private PlayerMove.SwitchState switchState; // 未使用のためコメントアウトまたは削除
 
     public StageState CurrentStage => Stage;
 
@@ -37,16 +37,17 @@ public class StageStates : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        LightObj.SetActive(false);
     }
 
     private void Start()
     {
-        
+
         Stage = StageState.White;
         Wgenerate();
+        SwitchOff();
     }
 
+    // Switchの状態チェックはPlayerMoveからのアクション呼び出しに任せるため、Updateから削除
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -54,7 +55,9 @@ public class StageStates : MonoBehaviour
             Reverse();
         }
 
-        if(switchState == PlayerMove.SwitchState.On)
+        // 旧コード: PlayerMove.OnSwitchの状態を常にチェックしていた
+        /*
+        if(PlayerMove.OnSwitch == true)
         {
             SwitchOn();
         }
@@ -62,6 +65,7 @@ public class StageStates : MonoBehaviour
         {
             SwitchOff();
         }
+        */
     }
 
     public void Reverse()
@@ -75,6 +79,19 @@ public class StageStates : MonoBehaviour
         {
             Stage = StageState.White;
             Wgenerate();
+        }
+    }
+
+    // スイッチの状態をトグル（反転）する公開メソッド
+    public void ToggleSwitch()
+    {
+        if (LightObj.activeSelf)
+        {
+            SwitchOff();
+        }
+        else
+        {
+            SwitchOn();
         }
     }
 
@@ -109,10 +126,10 @@ public class StageStates : MonoBehaviour
         wGround.SetActive(false);
         wLadder.SetActive(false);
         wFloat.SetActive(false);
-        wGoal.SetActive (false);
-        wLift.SetActive (false);
-        wNeedle.SetActive (false);
-        wSwitch.SetActive (false);
+        wGoal.SetActive(false);
+        wLift.SetActive(false);
+        wNeedle.SetActive(false);
+        wSwitch.SetActive(false);
     }
 
     private void SwitchOn()
