@@ -11,15 +11,23 @@ public class PlayerMove : MonoBehaviour
         Ladder
     };
 
+    public enum SwitchState
+    {
+        On,
+        Off
+    };
+
     [SerializeField] private float speed = 5f;
     [SerializeField] private float climbSpeed = 3f;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private PlayerState pstate;
+    private SwitchState sstate;
 
     private bool isTouchingLadder = false;
     private bool isTouchingFloat = false;
+    private bool isTouchingSwitch = false;
     private Collider2D playerCollider;
 
     // --- Lift ŠÖŒW ---
@@ -30,6 +38,7 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         playerCollider = rb.GetComponent<Collider2D>();
         pstate = PlayerState.Walk;
+        sstate = SwitchState.Off;
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -87,6 +96,24 @@ public class PlayerMove : MonoBehaviour
             var currentStage = StageStates.Instance.CurrentStage;
             var spriteRenderer = GetComponent<SpriteRenderer>();
             spriteRenderer.color = currentStage == StageStates.StageState.White ? Color.black : Color.white;
+        }
+    }
+
+    public void OnAction(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            if(isTouchingSwitch == true)
+            {
+                if(sstate == SwitchState.Off)
+                {
+                    sstate = SwitchState.On;
+                }
+                else if(sstate == SwitchState.On)
+                {
+                    sstate = SwitchState.Off;
+                }
+            }
         }
     }
 
@@ -158,6 +185,16 @@ public class PlayerMove : MonoBehaviour
         {
             Debug.Log("Goal!");
         }
+
+        if (collision.CompareTag("needle"))
+        {
+            Debug.Log("Miss");
+        }
+
+        if (collision.CompareTag("Switch"))
+        {
+            isTouchingSwitch = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -172,6 +209,11 @@ public class PlayerMove : MonoBehaviour
         else if (collision.CompareTag("Float"))
         {
             isTouchingFloat = false;
+        }
+
+        if (collision.CompareTag("Switch"))
+        {
+            isTouchingSwitch = false;
         }
     }
 }

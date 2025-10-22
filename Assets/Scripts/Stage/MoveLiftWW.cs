@@ -1,14 +1,14 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class LiftMoveW : LiftBase
+public class LiftMoveWW : LiftBase
 {
     [SerializeField] private float moveDistance = 2f;
     [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private bool movingRight = true;
 
     private Vector3 startPos;
     private Vector3 targetPos;
-    private bool movingRight = true;
     private Vector3 previousPos;
 
     private void Start()

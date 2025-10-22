@@ -9,6 +9,8 @@ TagManager:
   - Float
   - Goal
   - Lift
+  - needle
+  - Switch
   layers:
   - Default
   - TransparentFX
