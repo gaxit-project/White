@@ -22,6 +22,7 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField] private float speed = 5f;
     [SerializeField] private float climbSpeed = 3f;
+    [SerializeField] private Vector3 targetPosition = new Vector3(0f, 0f, 0f);
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -43,6 +44,7 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         playerCollider = rb.GetComponent<Collider2D>();
         pstate = PlayerState.Walk;
+        transform.position = targetPosition;
         // sstate = SwitchState.Off; // SwitchStateの削除に伴いコメントアウト
     }
 
@@ -200,6 +202,7 @@ public class PlayerMove : MonoBehaviour
         if (collision.CompareTag("needle"))
         {
             Debug.Log("Miss");
+            transform.position = targetPosition;
         }
 
         if (collision.CompareTag("Switch"))
