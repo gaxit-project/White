@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StageStates : MonoBehaviour
 {
@@ -28,9 +30,14 @@ public class StageStates : MonoBehaviour
     [SerializeField] GameObject Lightbg;
     [SerializeField] GameObject LightObj;
 
+    [Header("UI Reference")]
+    [SerializeField] private TextMeshProUGUI clearTimeText;
+    [SerializeField] private Button button;
+    [SerializeField] private Color whiteStageColor = Color.black;
+    [SerializeField] private Color blackStageColor = Color.white;
+
 
     private StageState Stage;
-    // private PlayerMove.SwitchState switchState; // 未使用のためコメントアウトまたは削除
 
     public StageState CurrentStage => Stage;
 
@@ -42,8 +49,9 @@ public class StageStates : MonoBehaviour
 
     private void Start()
     {
-
         Stage = StageState.White;
+        clearTimeText.gameObject.SetActive(false);
+        button.gameObject.SetActive(false);
         Wgenerate();
         SwitchOff();
     }
@@ -96,6 +104,31 @@ public class StageStates : MonoBehaviour
         }
     }
 
+    public void ShowClearUI(int clearTime)
+    {
+        if (clearTimeText == null)
+        {
+            Debug.LogError("Clear Time Text UIがStageStatesに設定されていません。");
+            return;
+        }
+
+        // 1. テキストの色を設定
+        if (Stage == StageState.White)
+        {
+            clearTimeText.color = whiteStageColor;
+        }
+        else // StageState.Black
+        {
+            clearTimeText.color = blackStageColor;
+        }
+
+        // 2. テキストの内容を設定
+        clearTimeText.text = "Stage Clear!";
+
+        // 3. UIを表示
+        clearTimeText.gameObject.SetActive(true);
+        button.gameObject.SetActive(true);
+    }
     private void Wgenerate()
     {
         wGround.SetActive(true);

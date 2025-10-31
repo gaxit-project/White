@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
@@ -11,14 +11,12 @@ public class PlayerMove : MonoBehaviour
         Ladder
     };
 
-    // SwitchState Enum ‚ÍStageStates‚Éˆ—‚ğˆÚŠÇ‚·‚é‚½‚ßAg—p‚·‚éˆÓ–¡‚ª”–‚­‚È‚Á‚½‚½‚ßAƒRƒƒ“ƒgƒAƒEƒg
-    /*
-    public enum SwitchState
+
+    enum GameState
     {
         On,
         Off
     };
-    */
 
     [SerializeField] private float speed = 5f;
     [SerializeField] private float climbSpeed = 3f;
@@ -27,53 +25,81 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private PlayerState pstate;
-    // private SwitchState sstate; // SwitchState‚Ìíœ‚É”º‚¢ƒRƒƒ“ƒgƒAƒEƒg
+    private GameState gstate;
+    private CameraZoom cameraZoom;
+    private TimeManager timeManager;
+    // private PlayerInput playerInput; // âŒ å‰Šé™¤: PlayerInputã®å‚ç…§
 
     private bool isTouchingLadder = false;
     private bool isTouchingFloat = false;
     private bool isTouchingSwitch = false;
 
-    // public static bool OnSwitch = false; // StageStates‚Åó‘ÔŠÇ—‚·‚é‚½‚ßíœ
     private Collider2D playerCollider;
 
-    // --- Lift ŠÖŒW ---
+    // --- Lift é–¢ä¿‚ ---
     private LiftBase currentLift = null;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        // playerInput = GetComponent<PlayerInput>(); // âŒ å‰Šé™¤: PlayerInputã®å–å¾—
         playerCollider = rb.GetComponent<Collider2D>();
         pstate = PlayerState.Walk;
         transform.position = targetPosition;
-        // sstate = SwitchState.Off; // SwitchState‚Ìíœ‚É”º‚¢ƒRƒƒ“ƒgƒAƒEƒg
+        gstate = GameState.On;
+    }
+
+    private void Start()
+    {
+        if (Camera.main != null)
+        {
+            cameraZoom = Camera.main.GetComponent<CameraZoom>();
+        }
+        if (cameraZoom != null)
+        {
+            cameraZoom.ZoomOutImmediate();
+        }
+
+        timeManager = FindObjectOfType<TimeManager>();
+        if (timeManager == null)
+        {
+            Debug.LogError("No TimeManager");
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        Vector2 input = context.ReadValue<Vector2>();
-
-        float deadZone = 0.3f;
-        float LadderZone = 0.8f;
-
-        moveInput.x = Mathf.Abs(input.x) < deadZone ? 0 : Mathf.Sign(input.x);
-        moveInput.y = Mathf.Abs(input.y) < deadZone ? 0 : Mathf.Sign(input.y);
-
-        // ‚Í‚µ‚²‚ÉG‚ê‚Ä‚¢‚Äc“ü—Í ¨ ‚Í‚µ‚²ó‘Ô‚Ö
-        if (isTouchingLadder && Mathf.Abs(moveInput.y) > 0)
+        if (gstate == GameState.On)
         {
-            SetState(PlayerState.Ladder);
-        }
+            Vector2 input = context.ReadValue<Vector2>();
 
-        // ‹­‚­‰¡‚É“|‚µ‚½‚ç Walk ‚É–ß‚·
-        if (!isTouchingFloat && pstate == PlayerState.Ladder && Mathf.Abs(input.x) > LadderZone)
-        {
-            SetState(PlayerState.Walk);
+            float deadZone = 0.3f;
+            float LadderZone = 0.8f;
+
+            moveInput.x = Mathf.Abs(input.x) < deadZone ? 0 : Mathf.Sign(input.x);
+            moveInput.y = Mathf.Abs(input.y) < deadZone ? 0 : Mathf.Sign(input.y);
+
+            // ã¯ã—ã”ã«è§¦ã‚Œã¦ã„ã¦ç¸¦å…¥åŠ› â†’ ã¯ã—ã”çŠ¶æ…‹ã¸
+            if (isTouchingLadder && Mathf.Abs(moveInput.y) > 0)
+            {
+                SetState(PlayerState.Ladder);
+            }
+
+            // å¼·ãæ¨ªã«å€’ã—ãŸã‚‰ Walk ã«æˆ»ã™
+            if (!isTouchingFloat && pstate == PlayerState.Ladder && Mathf.Abs(input.x) > LadderZone)
+            {
+                SetState(PlayerState.Walk);
+            }
         }
     }
 
     private void FixedUpdate()
     {
         Vector2 velocity = rb.velocity;
+
+        // ğŸ¯ Floatã¨ã®è¡çªåˆ¶å¾¡ã¯ç¶­æŒ ğŸ¯
+        bool ignoreFloat = (pstate == PlayerState.Ladder);
+        IgnoreFloatCollisions(ignoreFloat);
 
         if (pstate == PlayerState.Walk)
         {
@@ -87,7 +113,7 @@ public class PlayerMove : MonoBehaviour
 
         rb.velocity = velocity;
 
-        // --- Lift’Ç]ˆ— ---
+        // --- Liftè¿½å¾“å‡¦ç† ---
         if (currentLift != null)
         {
             transform.position += currentLift.DeltaPosition;
@@ -96,13 +122,16 @@ public class PlayerMove : MonoBehaviour
 
     public void OnLT(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (gstate == GameState.On)
         {
-            StageStates.Instance.Reverse();
+            if (context.performed)
+            {
+                StageStates.Instance.Reverse();
 
-            var currentStage = StageStates.Instance.CurrentStage;
-            var spriteRenderer = GetComponent<SpriteRenderer>();
-            spriteRenderer.color = currentStage == StageStates.StageState.White ? Color.black : Color.white;
+                var currentStage = StageStates.Instance.CurrentStage;
+                var spriteRenderer = GetComponent<SpriteRenderer>();
+                spriteRenderer.color = currentStage == StageStates.StageState.White ? Color.black : Color.white;
+            }
         }
     }
 
@@ -112,20 +141,7 @@ public class PlayerMove : MonoBehaviour
         {
             if (isTouchingSwitch == true)
             {
-                // StageStates‚ÌToggleSwitch‚ğŒÄ‚Ño‚µAó‘Ô‚Ì”½“]ˆ—‚ğStageStates‚ÉˆÏ÷
                 StageStates.Instance.ToggleSwitch();
-
-                // ‹ŒƒR[ƒh‚ÌƒgƒOƒ‹ˆ—‚Ííœ
-                /*
-                if(OnSwitch == false)
-                {
-                    OnSwitch = true;
-                }
-                else
-                {
-                    OnSwitch = false;
-                }
-                */
             }
         }
     }
@@ -137,18 +153,17 @@ public class PlayerMove : MonoBehaviour
 
         if (pstate == PlayerState.Ladder)
         {
-            IgnoreFloatCollisions(true);
             rb.gravityScale = 0f;
         }
         else
         {
-            IgnoreFloatCollisions(false);
             rb.gravityScale = 1f;
         }
     }
 
     private void IgnoreFloatCollisions(bool ignore)
     {
+        // Floatã‚¿ã‚°ã‚’æŒã¤ã™ã¹ã¦ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã®è¡çªã‚’ç„¡è¦–/æœ‰åŠ¹åŒ–
         foreach (var floatObj in GameObject.FindGameObjectsWithTag("Float"))
         {
             var col = floatObj.GetComponent<Collider2D>();
@@ -159,7 +174,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    // --- LiftŒŸo ---
+    // --- Liftæ¤œå‡º ---
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Lift"))
@@ -197,11 +212,32 @@ public class PlayerMove : MonoBehaviour
         if (collision.CompareTag("Goal"))
         {
             Debug.Log("Goal!");
+            gstate = GameState.Off;
+
+            // if (playerInput != null) { playerInput.enabled = false; } // âŒ å‰Šé™¤: å…¥åŠ›ç„¡åŠ¹åŒ–
+
+            int clearTime = 0;
+
+            if (Camera.main != null)
+            {
+                cameraZoom.FocusOnPosition(transform.position);
+            }
+
+            if (timeManager != null)
+            {
+                clearTime = timeManager.StopTimer();
+            }
+
+            if (StageStates.Instance != null)
+            {
+                StageStates.Instance.ShowClearUI(clearTime);
+            }
         }
 
         if (collision.CompareTag("needle"))
         {
             Debug.Log("Miss");
+            // ğŸ¯ å¾©æ´»: ä»¥å‰ã®ãƒ¯ãƒ¼ãƒ—å‡¦ç†ã«æˆ»ã™ ğŸ¯
             transform.position = targetPosition;
         }
 
