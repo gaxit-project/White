@@ -18,6 +18,10 @@ public class PlayerMove : MonoBehaviour
         Off
     };
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip goalSound;
+    private AudioSource audiosource;
+
     [SerializeField] private float speed = 5f;
     [SerializeField] private float climbSpeed = 3f;
     [SerializeField] private Vector3 targetPosition = new Vector3(0f, 0f, 0f);
@@ -51,6 +55,9 @@ public class PlayerMove : MonoBehaviour
 
     private void Start()
     {
+        audiosource = gameObject.GetComponent<AudioSource>();
+        audiosource.playOnAwake = false;
+
         if (Camera.main != null)
         {
             cameraZoom = Camera.main.GetComponent<CameraZoom>();
@@ -217,6 +224,11 @@ public class PlayerMove : MonoBehaviour
             // if (playerInput != null) { playerInput.enabled = false; } // ❌ 削除: 入力無効化
 
             int clearTime = 0;
+
+            if(goalSound != null)
+            {
+                audiosource.PlayOneShot(goalSound);
+            }
 
             if (Camera.main != null)
             {

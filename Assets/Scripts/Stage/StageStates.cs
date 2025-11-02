@@ -13,6 +13,10 @@ public class StageStates : MonoBehaviour
         Black
     };
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip switchSound;
+    private AudioSource audiosource;
+
     [SerializeField] GameObject wGround;
     [SerializeField] GameObject bGround;
     [SerializeField] GameObject wLadder;
@@ -29,6 +33,11 @@ public class StageStates : MonoBehaviour
     [SerializeField] GameObject bSwitch;
     [SerializeField] GameObject Lightbg;
     [SerializeField] GameObject LightObj;
+    [SerializeField] GameObject wNeedleC;
+    [SerializeField] GameObject bNeedleC;
+    [SerializeField] GameObject wNeedleL;
+    [SerializeField] GameObject bNeedleL;
+
 
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI clearTimeText;
@@ -49,6 +58,8 @@ public class StageStates : MonoBehaviour
 
     private void Start()
     {
+        audiosource = gameObject.AddComponent<AudioSource>();
+        audiosource.playOnAwake = false;
         Stage = StageState.White;
         clearTimeText.gameObject.SetActive(false);
         button.gameObject.SetActive(false);
@@ -94,6 +105,11 @@ public class StageStates : MonoBehaviour
     // スイッチの状態をトグル（反転）する公開メソッド
     public void ToggleSwitch()
     {
+        if (switchSound != null)
+        {
+            audiosource.PlayOneShot(switchSound);
+        }
+
         if (LightObj.activeSelf)
         {
             SwitchOff();
@@ -137,6 +153,8 @@ public class StageStates : MonoBehaviour
         wGoal.SetActive(true);
         wLift.SetActive(true);
         wNeedle.SetActive(true);
+        wNeedleC.SetActive(true);
+        wNeedleL.SetActive(true);
         wSwitch.SetActive(true);
         bGround.SetActive(false);
         bLadder.SetActive(false);
@@ -144,6 +162,8 @@ public class StageStates : MonoBehaviour
         bGoal.SetActive(false);
         bLift.SetActive(false);
         bNeedle.SetActive(false);
+        bNeedleC.SetActive(false);
+        bNeedleL.SetActive(false);
         bSwitch.SetActive(false);
 
     }
@@ -156,6 +176,8 @@ public class StageStates : MonoBehaviour
         bGoal.SetActive(true);
         bLift.SetActive(true);
         bNeedle.SetActive(true);
+        bNeedleC.SetActive(true);
+        bNeedleL.SetActive(true);
         bSwitch.SetActive(true);
         wGround.SetActive(false);
         wLadder.SetActive(false);
@@ -163,6 +185,8 @@ public class StageStates : MonoBehaviour
         wGoal.SetActive(false);
         wLift.SetActive(false);
         wNeedle.SetActive(false);
+        wNeedleC.SetActive(false);
+        wNeedleL.SetActive(false);
         wSwitch.SetActive(false);
     }
 
