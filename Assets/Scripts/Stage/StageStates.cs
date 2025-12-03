@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class StageStates : MonoBehaviour
@@ -15,6 +16,7 @@ public class StageStates : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip switchSound;
+    [SerializeField] private AudioMixerGroup seMixerGroup; // Inspector‚ÅVolumeManager‚ÌSE MixerGroup‚ðŠ„‚è“–‚Ä
     private AudioSource audiosource;
 
     [SerializeField] GameObject wGround;
@@ -60,6 +62,11 @@ public class StageStates : MonoBehaviour
     {
         audiosource = gameObject.AddComponent<AudioSource>();
         audiosource.playOnAwake = false;
+
+        if (seMixerGroup != null)
+        {
+            audiosource.outputAudioMixerGroup = seMixerGroup;
+        }
         Stage = StageState.White;
         clearTimeText.gameObject.SetActive(false);
         button.gameObject.SetActive(false);

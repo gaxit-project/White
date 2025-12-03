@@ -18,6 +18,12 @@ public class PlayerMove : MonoBehaviour
         Off
     };
 
+    enum FinishState
+    {
+        Off,
+        On
+    };
+
     [Header("Audio")]
     [SerializeField] private AudioClip goalSound;
     private AudioSource audiosource;
@@ -30,6 +36,7 @@ public class PlayerMove : MonoBehaviour
     private Vector2 moveInput;
     private PlayerState pstate;
     private GameState gstate;
+    private FinishState fstate;
     private CameraZoom cameraZoom;
     private TimeManager timeManager;
     // private PlayerInput playerInput; // ❌ 削除: PlayerInputの参照
@@ -51,6 +58,7 @@ public class PlayerMove : MonoBehaviour
         pstate = PlayerState.Walk;
         transform.position = targetPosition;
         gstate = GameState.On;
+        fstate = FinishState.Off;
     }
 
     private void Start()
@@ -153,6 +161,31 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    public void OnStart(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            if (fstate == FinishState.Off)
+            {
+                PauseManager.Instance.TogglePause();
+            }
+        }
+    }
+
+    public void SetGameState(bool on)
+    {
+        gstate = on ? GameState.On : GameState.Off;
+        moveInput = Vector2.zero; // 入力リセット
+        rb.velocity = Vector2.zero; // 慣性リセット
+    }
+
+
+    public void ResetInput()
+    {
+        moveInput = Vector2.zero;
+        rb.velocity = Vector2.zero; // 慣性も止める
+    }
+
     private void SetState(PlayerState newState)
     {
         if (pstate == newState) return;
@@ -220,7 +253,10 @@ public class PlayerMove : MonoBehaviour
         {
             Debug.Log("Goal!");
             gstate = GameState.Off;
+            fstate = FinishState.On;
 
+            rb.velocity = Vector2.zero;
+            moveInput = Vector2.zero;
             // if (playerInput != null) { playerInput.enabled = false; } // ❌ 削除: 入力無効化
 
             int clearTime = 0;

@@ -1,27 +1,45 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioPlayer : MonoBehaviour
 {
-    public AudioClip soundClip;   // Ä¶‚µ‚½‚¢‰¹‚ÌAudioClip
+    public AudioClip soundClip;
+    [SerializeField] private AudioMixerGroup outputGroup;
+
     private AudioSource audioSource;
 
     void Start()
     {
-        // AudioSourceƒRƒ“ƒ|[ƒlƒ“ƒg‚ğæ“¾i‚È‚¯‚ê‚Î©“®’Ç‰Áj
         audioSource = gameObject.GetComponent<AudioSource>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
-        // ‰¹—Ê‚âƒ‹[ƒvİ’è‚È‚Ç‚à‰Â”\
+        // Outputã‚’Mixerã‚°ãƒ«ãƒ¼ãƒ—ã«è¨­å®š
+        if (outputGroup != null)
+        {
+            audioSource.outputAudioMixerGroup = outputGroup;
+        }
+
         audioSource.playOnAwake = false;
         audioSource.loop = false;
+        audioSource.volume = 1f; // Mixeråˆ¶å¾¡ã®ãŸã‚ã€å¿…ãš1fã«è¨­å®š
+
+        // ã€âœ… ä¿®æ­£ç‚¹ã€‘æ–°ã—ã„AudioSourceã«ç¾åœ¨ã®éŸ³é‡è¨­å®šã‚’å¼·åˆ¶çš„ã«é©ç”¨ã™ã‚‹
+        // VolumeManagerãŒã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã§ã‚ã‚‹å‰æ
+        if (VolumeManager.Instance != null)
+        {
+            VolumeManager.Instance.LoadVolume();
+        }
     }
 
-    // ‰¹‚ğ–Â‚ç‚·ƒƒ\ƒbƒh
+    // éŸ³ã‚’é³´ã‚‰ã™ãƒ¡ã‚½ãƒƒãƒ‰
     public void Play()
     {
-        audioSource.PlayOneShot(soundClip);
+        if (soundClip != null)
+        {
+            audioSource.PlayOneShot(soundClip);
+        }
     }
 }
