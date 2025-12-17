@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Stages/LiftStage.unity
     guid: a113b1fcd136f9f4087192822c4eb995
   - enabled: 1
+    path: Assets/Scenes/Stages/LiftSecond.unity
+    guid: beb06b2a84d444044b13779f57cc85a6
+  - enabled: 1
     path: Assets/Scenes/Stages/FinalStage.unity
     guid: ef64d40243c384c439b61164b683e601
   m_configObjects: {}
