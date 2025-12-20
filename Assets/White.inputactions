@@ -132,8 +132,30 @@
                 },
                 {
                     "name": "",
+                    "id": "55e1c686-1ed4-4f7b-9534-3aa544860504",
+                    "path": "<Keyboard>/o",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reverse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "8144f00a-96a4-42bb-8ea0-3bd06ace83ad",
                     "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "96f0dd23-d340-47c4-a4d2-aa7e6a9e3ab0",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -156,6 +178,17 @@
                     "name": "",
                     "id": "d0e39ee9-1571-4d71-8da4-9f9f547293ff",
                     "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e1b1b474-834a-427e-9ff5-8e35ed58d78a",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

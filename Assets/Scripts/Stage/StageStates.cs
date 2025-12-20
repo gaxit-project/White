@@ -77,10 +77,6 @@ public class StageStates : MonoBehaviour
     // Switchの状態チェックはPlayerMoveからのアクション呼び出しに任せるため、Updateから削除
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Reverse();
-        }
 
         // 旧コード: PlayerMove.OnSwitchの状態を常にチェックしていた
         /*

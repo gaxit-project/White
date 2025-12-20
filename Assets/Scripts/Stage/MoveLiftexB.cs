@@ -12,11 +12,15 @@ public class MoveLiftexB : LiftBase
     private Vector3 targetPos;
     private Vector3 previousPos;
 
+    private Collider2D liftCollider;
+
     private void Start()
     {
         startPos = transform.position;
         targetPos = startPos + Vector3.right * moveDistance;
         previousPos = startPos;
+
+        liftCollider = GetComponentInChildren<Collider2D>();
     }
 
     // Update is called once per frame
@@ -26,10 +30,17 @@ public class MoveLiftexB : LiftBase
         if (StageStates.Instance == null ||
             StageStates.Instance.CurrentStage != StageStates.StageState.Black)
         {
+            if(liftCollider != null)
+                liftCollider.enabled = false;
+
             DeltaPosition = Vector3.zero;
             previousPos = transform.position;
             return;
         }
+
+        // Black ‚Ì‚Æ‚«‚Í“–‚½‚è”»’è‚ð—LŒø‚É‚·‚é
+        if (liftCollider != null)
+            liftCollider.enabled = true;
 
         transform.position = Vector3.MoveTowards(
             transform.position,
