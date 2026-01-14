@@ -26,7 +26,7 @@ public class MoveLiftexB : LiftBase
     // Update is called once per frame
     private void FixedUpdate()
     {
-        // š Stage‚ªWhite‚Å‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
+        // š Stage‚ªBlack‚Å‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
         if (StageStates.Instance == null ||
             StageStates.Instance.CurrentStage != StageStates.StageState.Black)
         {
