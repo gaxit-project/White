@@ -5811,7 +5811,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 1934039320492185038, guid: a144b1a210ec0d24689c0c263dab38a0, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 7262664d0b3051a4ba4528c1415e8bc3, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 0084b49e18d0ac8469407e7e9eb84aa7, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -7377,7 +7377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48bda6c25f2a38b4687bcabff9d553f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneName: Title
+  nextSceneName: GameClear
 --- !u!4 &1339324570
 Transform:
   m_ObjectHideFlags: 0
@@ -10705,7 +10705,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Title
+  m_Text: Next
 --- !u!222 &1671680505
 CanvasRenderer:
   m_ObjectHideFlags: 0

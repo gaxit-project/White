@@ -16,6 +16,8 @@ public class ImageMover : MonoBehaviour
     // y座標の終了位置
     private readonly float endY = 0f;
 
+    private bool pushued = false;
+
     public AnimationCurve movementCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
     void Start()
@@ -35,8 +37,12 @@ public class ImageMover : MonoBehaviour
 
     public void OnButtonPressed()
     {
-        StopAllCoroutines();
-        StartCoroutine(MoveImageCoroutine());
+        if (!pushued)
+        {
+            pushued = true;
+            StopAllCoroutines();
+            StartCoroutine(MoveImageCoroutine());
+        }
     }
 
     // Imageを移動させるコルーチン

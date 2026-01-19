@@ -20,28 +20,34 @@ public class StageClear : MonoBehaviour
     // 加速/減速を制御するためのカーブ
     public AnimationCurve movementCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
+    private bool pushed = false;
+
     // Start()はそのまま削除した状態を維持
 
     // ⭐ 修正: ボタンが押されたときに行う処理 ⭐
     public void OnButtonPressed()
     {
-        // 1. 既に実行中のコルーチンを停止
-        StopAllCoroutines();
-
-        // 2. RectTransformを取得
-        RectTransform rt = targetImage.GetComponent<RectTransform>();
-        if (rt == null)
+        if (!pushed)
         {
-            Debug.LogError("Target Image is missing RectTransform!");
-            return;
+            pushed = true;
+            // 1. 既に実行中のコルーチンを停止
+            StopAllCoroutines();
+
+            // 2. RectTransformを取得
+            RectTransform rt = targetImage.GetComponent<RectTransform>();
+            if (rt == null)
+            {
+                Debug.LogError("Target Image is missing RectTransform!");
+                return;
+            }
+
+            // 3. ⭐ ImageのX座標を-1920fにリセットします ⭐
+            Vector3 currentPos = rt.anchoredPosition;
+            rt.anchoredPosition = new Vector3(startX, currentPos.y, currentPos.z);
+
+            // 4. 移動コルーチンを開始
+            StartCoroutine(MoveImageCoroutine());
         }
-
-        // 3. ⭐ ImageのX座標を-1920fにリセットします ⭐
-        Vector3 currentPos = rt.anchoredPosition;
-        rt.anchoredPosition = new Vector3(startX, currentPos.y, currentPos.z);
-
-        // 4. 移動コルーチンを開始
-        StartCoroutine(MoveImageCoroutine());
     }
 
     // Imageを移動させるコルーチン

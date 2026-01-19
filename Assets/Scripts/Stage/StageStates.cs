@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class StageStates : MonoBehaviour
@@ -68,7 +69,10 @@ public class StageStates : MonoBehaviour
             audiosource.outputAudioMixerGroup = seMixerGroup;
         }
         Stage = StageState.White;
-        clearTimeText.gameObject.SetActive(false);
+        if(SceneManager.GetActiveScene().name != "Title")
+        {
+            clearTimeText.gameObject.SetActive(false);
+        }
         button.gameObject.SetActive(false);
         Wgenerate();
         SwitchOff();
@@ -97,11 +101,19 @@ public class StageStates : MonoBehaviour
         {
             Stage = StageState.Black;
             Bgenerate();
+            if(SceneManager.GetActiveScene().name == "Title")
+            {
+                clearTimeText.color = blackStageColor;
+            }
         }
         else
         {
             Stage = StageState.White;
             Wgenerate();
+            if (SceneManager.GetActiveScene().name == "Title")
+            {
+                clearTimeText.color = whiteStageColor;
+            }
         }
     }
 

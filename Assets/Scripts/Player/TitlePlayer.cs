@@ -1,10 +1,17 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMove : MonoBehaviour
+public class TitlePlayer : MonoBehaviour
 {
+    [SerializeField] private Button Startbutton;
+    [SerializeField] private Button Option;
+    [SerializeField] private Button Quit;
+    [SerializeField] private TextMeshProUGUI Push;
+    [SerializeField] private ShowTitleMenu showTitleMenu;
     enum PlayerState
     {
         Walk,
@@ -24,47 +31,27 @@ public class PlayerMove : MonoBehaviour
         On
     };
 
-    [Header("Audio")]
-    [SerializeField] private AudioClip goalSound;
-    private AudioSource audiosource;
-
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private float climbSpeed = 3f;
-    [SerializeField] private Vector3 targetPosition = new Vector3(0f, 0f, 0f);
-
     private Rigidbody2D rb;
     private Vector2 moveInput;
-    private PlayerState pstate;
     private GameState gstate;
-    private FinishState fstate;
     private CameraZoom cameraZoom;
     private TimeManager timeManager;
     // private PlayerInput playerInput; // ❌ 削除: PlayerInputの参照
 
-    private bool isTouchingLadder = false;
-    private bool isTouchingFloat = false;
-    private bool isTouchingSwitch = false;
-
     private Collider2D playerCollider;
 
     // --- Lift 関係 ---
-    private LiftBase currentLift = null;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         // playerInput = GetComponent<PlayerInput>(); // ❌ 削除: PlayerInputの取得
         playerCollider = rb.GetComponent<Collider2D>();
-        pstate = PlayerState.Walk;
-        transform.position = targetPosition;
         gstate = GameState.On;
-        fstate = FinishState.Off;
     }
 
     private void Start()
     {
-        audiosource = gameObject.GetComponent<AudioSource>();
-        audiosource.playOnAwake = false;
 
         if (Camera.main != null)
         {
@@ -82,7 +69,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    public void OnMove(InputAction.CallbackContext context)
+    /*public void OnMove(InputAction.CallbackContext context)
     {
         if (gstate == GameState.On)
         {
@@ -113,9 +100,9 @@ public class PlayerMove : MonoBehaviour
                 SetState(PlayerState.Walk);
             }
         }
-    }
+    }*/
 
-    private void FixedUpdate()
+    /*private void FixedUpdate()
     {
         Vector2 velocity = rb.velocity;
 
@@ -140,13 +127,14 @@ public class PlayerMove : MonoBehaviour
         {
             transform.position += currentLift.DeltaPosition;
         }
-    }
+    }*/
 
     public void OnLT(InputAction.CallbackContext context)
     {
         if (gstate == GameState.On && context.performed)
         {
             StageStates.Instance.Reverse();
+            ShowTitleMenu.TitleInstance.ShowTitle();
 
             var currentStage = StageStates.Instance.CurrentStage;
 
@@ -164,7 +152,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    public void OnAction(InputAction.CallbackContext context)
+    /*public void OnAction(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
@@ -173,9 +161,9 @@ public class PlayerMove : MonoBehaviour
                 StageStates.Instance.ToggleSwitch();
             }
         }
-    }
+    }*/
 
-    public void OnStart(InputAction.CallbackContext context)
+    /*public void OnStart(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
@@ -198,9 +186,9 @@ public class PlayerMove : MonoBehaviour
     {
         moveInput = Vector2.zero;
         rb.velocity = Vector2.zero; // 慣性も止める
-    }
+    }*/
 
-    private void SetState(PlayerState newState)
+    /*private void SetState(PlayerState newState)
     {
         if (pstate == newState) return;
         pstate = newState;
@@ -275,7 +263,7 @@ public class PlayerMove : MonoBehaviour
 
             int clearTime = 0;
 
-            if(goalSound != null)
+            if (goalSound != null)
             {
                 audiosource.PlayOneShot(goalSound);
             }
@@ -327,5 +315,5 @@ public class PlayerMove : MonoBehaviour
         {
             isTouchingSwitch = false;
         }
-    }
+    }*/
 }
