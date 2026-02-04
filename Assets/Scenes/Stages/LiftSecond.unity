@@ -5315,7 +5315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48bda6c25f2a38b4687bcabff9d553f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneName: FinalStage
+  nextSceneName: SwitchStage
 --- !u!4 &1339324570
 Transform:
   m_ObjectHideFlags: 0

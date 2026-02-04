@@ -21,11 +21,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Stages/SecondStage.unity
     guid: 9a12710618f46a24e9514bbff384cfff
   - enabled: 1
+    path: Assets/Scenes/Stages/LiftTraining 3.unity
+    guid: 4d43a799ca9c1ba4eb640562f5a4a919
+  - enabled: 1
     path: Assets/Scenes/Stages/LiftStage.unity
-    guid: a113b1fcd136f9f4087192822c4eb995
+    guid: a5bfc716437c75e4189947b610aa5bb7
   - enabled: 1
     path: Assets/Scenes/Stages/LiftSecond.unity
     guid: beb06b2a84d444044b13779f57cc85a6
+  - enabled: 1
+    path: Assets/Scenes/Stages/SwitchStage.unity
+    guid: dea362b7ded029b4c90c560205880717
   - enabled: 1
     path: Assets/Scenes/Stages/FinalStage.unity
     guid: ef64d40243c384c439b61164b683e601
@@ -35,9 +41,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Stages/LiftTraining 2.unity
     guid: 815d2047f7eea5d418e409df80bc4460
-  - enabled: 1
-    path: Assets/Scenes/Stages/LiftTraining 3.unity
-    guid: 4d43a799ca9c1ba4eb640562f5a4a919
   - enabled: 1
     path: Assets/Scenes/Stages/GameClear.unity
     guid: 93196fa754fb6a14fa8f29abbdb27e63
