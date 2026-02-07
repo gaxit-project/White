@@ -32,6 +32,10 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField] private float climbSpeed = 3f;
     [SerializeField] private Vector3 targetPosition = new Vector3(0f, 0f, 0f);
+    [SerializeField] private float noMoveTimeLimit = 3f;
+
+    private float noHorizontalInputTimer = 0f;
+    private bool noMoveTriggered = false;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -52,6 +56,10 @@ public class PlayerMove : MonoBehaviour
 
     // --- Lift 関係 ---
     private LiftBase currentLift = null;
+
+    public static event Action OnNoHorizontalInputFor3Seconds;
+    public static event Action OnHorizontalInputResumed;
+
 
     private void Awake()
     {
@@ -102,6 +110,15 @@ public class PlayerMove : MonoBehaviour
                 Vector3 scale = transform.localScale;
                 scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput.x);
                 transform.localScale = scale;
+
+                noHorizontalInputTimer = 0f;
+
+                // 🔹 無操作状態から復帰した瞬間
+                if (noMoveTriggered)
+                {
+                    noMoveTriggered = false;
+                    OnHorizontalInputResumed?.Invoke();
+                }
             }
 
             // はしごに触れていて縦入力 → はしご状態へ
@@ -143,6 +160,20 @@ public class PlayerMove : MonoBehaviour
         {
             transform.position += currentLift.DeltaPosition;
         }
+
+        if (gstate != GameState.On) return;
+
+        // 左右入力が無い状態
+        if (moveInput.x == 0)
+        {
+            noHorizontalInputTimer += Time.deltaTime;
+
+            if (noHorizontalInputTimer >= noMoveTimeLimit && !noMoveTriggered)
+            {
+                noMoveTriggered = true;
+                OnNoHorizontalInputFor3Seconds?.Invoke();
+            }
+        }
     }
 
     public void OnLT(InputAction.CallbackContext context)
@@ -167,7 +198,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    public void OnAction(InputAction.CallbackContext context)
+    /*public void OnAction(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
@@ -176,7 +207,7 @@ public class PlayerMove : MonoBehaviour
                 StageStates.Instance.ToggleSwitch();
             }
         }
-    }
+    }*/
 
     public void OnStart(InputAction.CallbackContext context)
     {
@@ -310,7 +341,11 @@ public class PlayerMove : MonoBehaviour
 
         if (collision.CompareTag("Switch"))
         {
-            isTouchingSwitch = true;
+            if(isTouchingSwitch == false)
+            {
+                StageStates.Instance.ToggleSwitch();
+                isTouchingSwitch = true;
+            }            
         }
     }
 
@@ -328,9 +363,9 @@ public class PlayerMove : MonoBehaviour
             isTouchingFloat = false;
         }
 
-        if (collision.CompareTag("Switch"))
+        /*if (collision.CompareTag("Switch"))
         {
             isTouchingSwitch = false;
-        }
+        }*/
     }
 }
