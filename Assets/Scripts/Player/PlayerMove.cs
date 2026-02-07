@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMove : MonoBehaviour
@@ -44,6 +45,8 @@ public class PlayerMove : MonoBehaviour
     private bool isTouchingLadder = false;
     private bool isTouchingFloat = false;
     private bool isTouchingSwitch = false;
+
+    public static event Action OnPlayerFinished;
 
     private Collider2D playerCollider;
 
@@ -272,6 +275,8 @@ public class PlayerMove : MonoBehaviour
             rb.velocity = Vector2.zero;
             moveInput = Vector2.zero;
             // if (playerInput != null) { playerInput.enabled = false; } // ❌ 削除: 入力無効化
+
+            OnPlayerFinished?.Invoke();
 
             int clearTime = 0;
 

@@ -75,7 +75,14 @@ public class StageStates : MonoBehaviour
         }
         button.gameObject.SetActive(false);
         Wgenerate();
-        SwitchOff();
+        if (SceneManager.GetActiveScene().name == "Mix1")
+        {
+            SwitchOn();
+        }
+        else
+        {
+            SwitchOff();
+        }
     }
 
     // Switchの状態チェックはPlayerMoveからのアクション呼び出しに任せるため、Updateから削除

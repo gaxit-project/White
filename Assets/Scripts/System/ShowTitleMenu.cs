@@ -23,10 +23,11 @@ public class ShowTitleMenu : MonoBehaviour
     }
     public void ShowTitle()
     {
-        Startbutton.gameObject.SetActive(true);
-        Option.gameObject.SetActive(true);
-        Quit.gameObject.SetActive(true);
-        Push.gameObject.SetActive(false);
+        bool active = !Startbutton.gameObject.activeSelf;
+        Startbutton.gameObject.SetActive(active);
+        Option.gameObject.SetActive(active);
+        Quit.gameObject.SetActive(active);
+        Push.gameObject.SetActive(!active);
         Debug.Log("showtitle");
     }
 }
