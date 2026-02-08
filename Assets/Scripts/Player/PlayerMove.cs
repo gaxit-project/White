@@ -27,7 +27,14 @@ public class PlayerMove : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip goalSound;
+    [SerializeField] private AudioClip damageSound;
     private AudioSource audiosource;
+
+    [Header("Respawn")]
+    [SerializeField] private float respawnDelay = 1f;
+    [SerializeField] private ParticleSystem damageParticle;
+
+    private bool isRespawning = false;
 
     [SerializeField] private float speed = 5f;
     [SerializeField] private float climbSpeed = 3f;
@@ -44,7 +51,7 @@ public class PlayerMove : MonoBehaviour
     private FinishState fstate;
     private CameraZoom cameraZoom;
     private TimeManager timeManager;
-    // private PlayerInput playerInput; // ❌ 削除: PlayerInputの参照
+    private SpriteRenderer[] spriteRenderers;
 
     private bool isTouchingLadder = false;
     private bool isTouchingFloat = false;
@@ -66,6 +73,7 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         // playerInput = GetComponent<PlayerInput>(); // ❌ 削除: PlayerInputの取得
         playerCollider = rb.GetComponent<Collider2D>();
+        spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
         pstate = PlayerState.Walk;
         transform.position = targetPosition;
         gstate = GameState.On;
@@ -334,10 +342,16 @@ public class PlayerMove : MonoBehaviour
 
         if (collision.CompareTag("needle"))
         {
-            Debug.Log("Miss");
-            // 🎯 復活: 以前のワープ処理に戻す 🎯
-            transform.position = targetPosition;
+            if (!isRespawning)
+            {
+                if (damageSound != null)
+                {
+                    audiosource.PlayOneShot(damageSound);
+                }
+                StartCoroutine(RespawnRoutine());
+            }
         }
+
 
         if (collision.CompareTag("Switch"))
         {
@@ -368,4 +382,48 @@ public class PlayerMove : MonoBehaviour
             isTouchingSwitch = false;
         }*/
     }
+
+    private void SetPlayerVisible(bool visible)
+    {
+        foreach (var sr in spriteRenderers)
+        {
+            sr.enabled = visible;
+        }
+    }
+
+    private IEnumerator RespawnRoutine()
+    {
+        isRespawning = true;
+
+        // 操作停止
+        SetGameState(false);
+        rb.velocity = Vector2.zero;
+
+        // Particle をプレイヤー位置へ
+        if (damageParticle != null)
+        {
+            damageParticle.transform.position = transform.position;
+            damageParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            damageParticle.Play();
+        }
+
+        // プレイヤー非表示
+        SetPlayerVisible(false);
+
+        yield return new WaitForSeconds(respawnDelay);
+
+        // リスポーン
+        transform.position = targetPosition;
+
+        rb.velocity = Vector2.zero;
+        moveInput = Vector2.zero;
+
+        // プレイヤー再表示
+        SetPlayerVisible(true);
+        SetGameState(true);
+
+        isRespawning = false;
+    }
+
+
 }

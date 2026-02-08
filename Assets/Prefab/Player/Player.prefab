@@ -412,9 +412,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goalSound: {fileID: 0}
+  respawnDelay: 1
+  damageParticle: {fileID: 0}
   speed: 3
   climbSpeed: 2
   targetPosition: {x: 0, y: 0, z: 0}
+  noMoveTimeLimit: 3
 --- !u!70 &723461520844841559
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

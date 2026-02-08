@@ -17,6 +17,8 @@ public class StageStates : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip switchSound;
+    [SerializeField] private AudioClip toWhiteSound;
+    [SerializeField] private AudioClip toBlackSound;
     [SerializeField] private AudioMixerGroup seMixerGroup; // Inspector‚ÅVolumeManager‚ÌSE MixerGroup‚ðŠ„‚è“–‚Ä
     private AudioSource audiosource;
 
@@ -108,7 +110,8 @@ public class StageStates : MonoBehaviour
         {
             Stage = StageState.Black;
             Bgenerate();
-            if(SceneManager.GetActiveScene().name == "Title")
+            audiosource.PlayOneShot(toBlackSound);
+            if (SceneManager.GetActiveScene().name == "Title")
             {
                 clearTimeText.color = blackStageColor;
             }
@@ -117,6 +120,7 @@ public class StageStates : MonoBehaviour
         {
             Stage = StageState.White;
             Wgenerate();
+            audiosource.PlayOneShot(toWhiteSound);
             if (SceneManager.GetActiveScene().name == "Title")
             {
                 clearTimeText.color = whiteStageColor;
