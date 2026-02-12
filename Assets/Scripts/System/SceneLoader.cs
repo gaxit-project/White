@@ -10,6 +10,14 @@ public class SceneLoader : MonoBehaviour
     /// <summary>
     /// インスペクターで設定された名前のシーンをロードします。
     /// </summary>
+    /// 
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.E) && Input.GetKey(KeyCode.M) && Input.GetKey(KeyCode.O))
+        {
+            SceneManager.LoadScene("DemoStage");
+        }
+    }
     public void LoadNextScene()
     {
         if (string.IsNullOrEmpty(nextSceneName))
